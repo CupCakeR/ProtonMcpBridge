@@ -5,29 +5,36 @@ using Sandbox;
 namespace ProtonMcpBridge;
 
 /// <summary>
-/// Starts and stops the listener on the editor hotload lifecycle. [EditorEvent.Hotload] fires on
-/// initial load and after every recompile, so it drives (re)start; Start is idempotent.
+/// Owns the listener's lifecycle across the editor session.
 ///
-/// Across a hotload of this addon the listener socket would be orphaned and keep the port bound. A
-/// live instance held in a static field receives IHotloadManaged.Destroyed before the assembly
-/// swaps, stopping the old listener while it's still reachable - so the port is free before the new
-/// assembly rebinds.
+/// Auto-start runs off the tool frame, not a load event: a library loaded after the editor core can
+/// miss "editor.created" and the initial "hotloaded", but the frame loop always ticks once we're
+/// live, so the first frame after any (re)load starts the server. It's one-shot, so a manual Stop
+/// sticks, and Start honours the enabled/platform checks itself.
+///
+/// Teardown uses IHotloadManaged.Destroyed: the listener socket lives in this assembly, so before a
+/// hotload swaps it out we stop the old listener while it's still reachable, freeing the port for
+/// the incoming version. A live instance is held in a static field so the hotloader can find it.
 /// </summary>
 internal sealed class BridgeInit : IHotloadManaged
 {
-	// Held statically so the hotloader visits it and calls Destroyed() before the swap.
 	static BridgeInit instance;
+	static bool autoStarted;
 
-	[EditorEvent.Hotload]
-	static void OnHotload()
+	[EditorEvent.Frame]
+	static void OnFrame()
 	{
 		instance ??= new BridgeInit();
+
+		if (autoStarted)
+			return;
+
+		autoStarted = true;
 		TcpMcpServer.Start();
 	}
 
 	void IHotloadManaged.Destroyed(Dictionary<string, object> state)
 	{
-		// Assembly is about to be replaced - free the port so the incoming version can rebind.
 		TcpMcpServer.Stop();
 	}
 }

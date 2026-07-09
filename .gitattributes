@@ -1,0 +1,5 @@
+# Normalize line endings, but keep C# as CRLF to match .editorconfig (end_of_line = crlf),
+# so clones don't drift to LF and trip CSharpier on Linux.
+* text=auto
+*.cs   text eol=crlf
+*.razor text eol=crlf

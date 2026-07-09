@@ -1,0 +1,14 @@
+{
+  "Title": "Proton MCP Bridge",
+  "Type": "library",
+  "Org": "ccr",
+  "Ident": "proton-mcp-bridge",
+  "Schema": 1,
+  "IncludeSourceFiles": false,
+  "Resources": null,
+  "PackageReferences": [],
+  "EditorReferences": null,
+  "Mounts": null,
+  "IsStandaloneOnly": false,
+  "Metadata": {}
+}

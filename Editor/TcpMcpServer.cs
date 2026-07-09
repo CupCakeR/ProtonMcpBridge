@@ -54,7 +54,10 @@ internal static class TcpMcpServer
 		}
 
 		if (!BridgeConfig.Enabled)
+		{
+			log.Info("Not starting - disabled. Enable it in View > MCP Bridge (Start).");
 			return;
+		}
 
 		// Refuse to start if the registry reflection target is missing.
 		if (!EngineBridge.Available)

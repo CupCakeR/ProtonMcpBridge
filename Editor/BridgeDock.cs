@@ -1,4 +1,5 @@
 using Editor;
+using Sandbox;
 
 namespace ProtonMcpBridge;
 
@@ -47,8 +48,20 @@ internal class BridgeDock : Widget
 		if (!BridgePlatform.IsLinux)
 			return;
 
-		// The setter starts or stops the listener.
-		BridgeConfig.Enabled = !TcpMcpServer.IsRunning;
+		// Act on the real listener state and persist the intent. Start/Stop are idempotent, and we
+		// can't rely on the Enabled setter alone - its side effect is skipped when the cookie already
+		// matches (e.g. enabled-but-not-running), which left the Start button doing nothing.
+		if (TcpMcpServer.IsRunning)
+		{
+			BridgeConfig.Enabled = false;
+			TcpMcpServer.Stop();
+		}
+		else
+		{
+			BridgeConfig.Enabled = true;
+			TcpMcpServer.Start();
+		}
+
 		Refresh();
 	}
 
@@ -85,6 +98,9 @@ internal class BridgeDock : Widget
 	/// <summary>Refresh the panel if it's open. Called when the listener starts or stops.</summary>
 	internal static void NotifyChanged()
 	{
-		Instance?.Refresh();
+		// IsValid() is null-safe and also false for a destroyed widget - the static Instance can
+		// outlive the panel (closed/reopened popout), and touching its dead QLabel would throw.
+		if (Instance.IsValid())
+			Instance.Refresh();
 	}
 }

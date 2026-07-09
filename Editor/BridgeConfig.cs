@@ -3,15 +3,15 @@ using System;
 namespace ProtonMcpBridge;
 
 /// <summary>
-/// Bridge settings, shared with the editor's built-in "MCP Server" preferences (Settings > MCP
-/// Server) by reading the same EditorCookies, so that tab configures the bridge too. The default
-/// port 7269 is the built-in server's, which is free on Linux since that server can't bind it under
-/// Proton. Changes from the dock apply immediately; changes from the preferences tab apply on the
-/// next start/restart, since the tab doesn't notify us.
+/// Bridge settings, persisted per-user via EditorCookie. The port is shared with the editor's
+/// built-in "MCP Server" preferences (it reads the same McpServerPort cookie), so its default is the
+/// built-in's 7269 - free on Linux, since that server can't bind it under Proton - and setting the
+/// port in that tab configures the bridge too (applies on the next start/restart). Enable/disable is
+/// the bridge's own, driven by the dock's Start/Stop.
 /// </summary>
 internal static class BridgeConfig
 {
-	const string EnabledKey = "McpServerEnabled";
+	const string EnabledKey = "ProtonMcpBridge.Enabled";
 	const string PortKey = "McpServerPort";
 
 	public const int DefaultPort = 7269;
@@ -34,7 +34,7 @@ internal static class BridgeConfig
 		}
 	}
 
-	/// <summary>Loopback port. Rebinds if already running.</summary>
+	/// <summary>Loopback port, shared with the built-in MCP Server tab. Rebinds if already running.</summary>
 	public static int Port
 	{
 		get => EditorCookie.Get(PortKey, DefaultPort);

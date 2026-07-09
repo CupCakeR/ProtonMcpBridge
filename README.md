@@ -50,9 +50,9 @@ claude mcp add --transport http sbox http://127.0.0.1:7269/mcp
 
 **View > MCP Bridge** has a status light and a Start/Stop button.
 
-Enabled state and port are shared with the editor's built-in **MCP Server** settings
-(Settings > MCP Server), so that tab configures the bridge too. Changes made there apply the next
-time the bridge starts (use the dock's Start/Stop or `mcp_bridge_restart`).
+The port is shared with the editor's built-in **MCP Server** settings (Settings > MCP Server), so
+setting it there also sets the bridge's port (applies on the next start; use the dock's Start/Stop
+or `mcp_bridge_restart`). Default is the built-in's 7269.
 
 Console commands:
 

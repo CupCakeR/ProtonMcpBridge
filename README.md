@@ -11,7 +11,7 @@ Linux only. On native Windows it stays inactive, since the built-in server alrea
 
 ## Install
 
-1. Copy this folder into your project's `Libraries/`, or add it as a library reference.
+1. Copy this folder into your project's `Libraries/`, or add it via the [library manager](https://sbox.game/ccr/proton-mcp-bridge).
 2. Open the project in the editor. The bridge starts automatically.
 3. Check it's running: **View > MCP Bridge**, or look for `Proton MCP bridge listening on
    http://127.0.0.1:7270/mcp` in the console.
